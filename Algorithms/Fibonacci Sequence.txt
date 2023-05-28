@@ -1,0 +1,70 @@
+#Author: Fábio Marane
+
+.data
+msg1:		.asciiz"~~~~ Fibonacci's Sequence generator ~~~~\nWrite a natural number (decimal) less than or equal to 46 (to avoid register overflow):\n"
+msg2:		.asciiz", "
+msg3:		.asciiz"\nHere it is:\n"
+.text
+
+main:		li $v0, 4			#Charge string print command to $v0
+		la $a0, msg1		#Charge msg1 to $a0
+		syscall			#Print msg1
+		
+		li $t2, 1			#Charge number 2 to register $t2
+
+		li $v0, 5			#Charge integer read command to $v0
+		syscall			#Read user's input - amount of numbers of the sequence
+		move $t1, $v0		#Move input value to $t1
+		
+		li $v0, 4			#Charge string print command to $v0
+		la $a0, msg3		#Charge msg3 to $a0
+		syscall			#Print msg3
+
+		bne $t2, $t1, exit	#Branch to check if the input is not equal to the value inside $t2 (one)
+		
+			move $a0, $t2	#Move the value of $t2 to $a0
+			li $v0, 1		#Charge integer print command to $v0
+			syscall		#Print the value of $t2 (one)
+			j end			#Jump to the end of the program
+
+		exit:				#Exit if the input value is different than one
+
+		sub $t1, $t1, 2		#Subtract 2 from the value of $t1, otherwise 2 additional values would be printed
+
+		li $s0, 1			#Charge number 1 to $s0
+		move $a0, $s0		#Move value of $s0 to $a0
+		li $v0, 1			#Charge integer print command to $v0
+		syscall			#Print the value of $s0
+
+		li $v0, 4			#Charge string print command to $v0
+		la $a0, msg2		#Charge msg2 to $a0
+		syscall			#Print msg2 - comma + space
+
+		li $s1, 1			#Charge number 1 to $s1
+		move $a0, $s1		#Move value of $s1 to $a0
+		li $v0, 1			#Charge integer print command to $v0
+		syscall			#Print the value of $s1
+		
+		start:					#Address for the beginning of the next branch
+		beq $t0, $t1, end			#Branch to check if the value of $t0 (counter) is equal to the value of $t1 (limit)
+
+			li $v0, 4				#Charge string print command to $v0
+			la $a0, msg2			#Charge msg2 to $a0
+			syscall				#Print msg2 - comma + space		
+	
+			add $s2, $s1, $s0		#Charge the sum of $s0 and $s1 to $s2
+			move $a0, $s2			#Move the result of the sum to $a0
+			li $v0, 1				#Charge integer print command to $v0
+			syscall				#Print the value of $s2
+
+			move $s0, $s1			#Move the value of $s1 to $s0
+			move $s1, $s2			#Move the value of $s2 to $s1
+			add $t0, $t0, 1			#Adding 1 to the counter
+			
+			
+			j start				#Return to the start of the branch
+
+		end:						#End of the program
+
+		li $v0, 10					#Charge exit command to $v0
+		syscall					#Leaving the program
